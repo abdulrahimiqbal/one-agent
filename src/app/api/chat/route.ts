@@ -169,13 +169,20 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      response: physicsResponse.response,
       sessionId: currentSessionId,
-      equations: physicsResponse.equations,
-      concepts: physicsResponse.concepts,
+      userMessage: userMessage,
+      agentMessage: agentMessage,
+      analysis: {
+        equations: physicsResponse.equations,
+        concepts: physicsResponse.concepts,
+        reasoning: physicsResponse.reasoning,
+      },
       followUpQuestions: followUpQuestions,
-      userMessage,
-      agentMessage,
+      session: {
+        id: currentSessionId,
+        title: userMessage?.sessionId ? 'Physics Session' : 'New Physics Session',
+        status: 'active'
+      },
       results
     })
 
