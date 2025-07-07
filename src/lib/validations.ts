@@ -3,13 +3,12 @@ import { z } from 'zod'
 // Session validation schemas
 export const CreateSessionSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
-  description: z.string().optional(),
+  status: z.enum(['active', 'completed', 'paused', 'failed']).default('active'),
 })
 
 export const UpdateSessionSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title too long').optional(),
-  description: z.string().optional(),
-  status: z.enum(['active', 'completed', 'archived']).optional(),
+  status: z.enum(['active', 'completed', 'paused', 'failed']).optional(),
 })
 
 // Message validation schemas
@@ -40,19 +39,19 @@ export const UpdateProgressSchema = z.object({
   details: z.string().optional(),
 })
 
-// Result validation schemas
+// Result validation schemas (matches ResearchResult model)
 export const CreateResultSchema = z.object({
   sessionId: z.string().min(1, 'Session ID is required'),
   title: z.string().min(1, 'Title is required'),
   content: z.string().min(1, 'Content is required'),
-  type: z.enum(['equation', 'graph', 'text', 'citation', 'calculation']),
+  type: z.enum(['equation', 'graph', 'text', 'citation', 'calculation', 'physics_analysis']),
   metadata: z.record(z.any()).optional(),
 })
 
 export const UpdateResultSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
   content: z.string().min(1, 'Content is required').optional(),
-  type: z.enum(['equation', 'graph', 'text', 'citation', 'calculation']).optional(),
+  type: z.enum(['equation', 'graph', 'text', 'citation', 'calculation', 'physics_analysis']).optional(),
   metadata: z.record(z.any()).optional(),
 })
 
