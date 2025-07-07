@@ -2,6 +2,8 @@
 
 An autonomous physics research agent built with Next.js and LangChain that can conduct physics research and push the boundaries of scientific knowledge.
 
+**🚀 Deployment Status: Ready for Vercel deployment**
+
 ## Features
 
 - **Interactive Chat Interface**: Communicate with the physics research agent
