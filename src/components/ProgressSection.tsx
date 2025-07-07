@@ -1,6 +1,5 @@
 'use client'
 
-import { Brain, CheckCircle, Clock, AlertCircle } from 'lucide-react'
 import { ResearchSession, ProgressStep } from '@/types/research'
 
 interface ProgressSectionProps {
@@ -12,13 +11,13 @@ export default function ProgressSection({ session, isAgentThinking }: ProgressSe
   const getStatusIcon = (status: ProgressStep['status']) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return '✅'
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-blue-500 animate-spin" />
+        return '⏳'
       case 'failed':
-        return <AlertCircle className="h-4 w-4 text-red-500" />
+        return '❌'
       default:
-        return <div className="h-4 w-4 border-2 border-gray-300 rounded-full" />
+        return '⭕'
     }
   }
 
@@ -39,8 +38,7 @@ export default function ProgressSection({ session, isAgentThinking }: ProgressSe
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <Brain className="h-5 w-5 text-physics-purple" />
-          Agent Progress
+          🧠 Agent Progress
         </h2>
         <p className="text-sm text-gray-600 mt-1">
           Watch how the agent thinks and processes your request
@@ -50,7 +48,7 @@ export default function ProgressSection({ session, isAgentThinking }: ProgressSe
       <div className="flex-1 overflow-y-auto p-4">
         {!session?.progress.length && !isAgentThinking ? (
           <div className="text-center text-gray-500 mt-8">
-            <Brain className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+            <div className="text-4xl mb-4">🧠</div>
             <p className="text-lg font-medium">No active research</p>
             <p className="text-sm mt-2">
               Start a conversation to see the agent's thinking process
@@ -64,7 +62,7 @@ export default function ProgressSection({ session, isAgentThinking }: ProgressSe
                 className={`border rounded-lg p-3 transition-all duration-200 ${getStatusColor(step.status)}`}
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 mt-0.5">
+                  <div className="flex-shrink-0 mt-0.5 text-lg">
                     {getStatusIcon(step.status)}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -95,8 +93,8 @@ export default function ProgressSection({ session, isAgentThinking }: ProgressSe
             {isAgentThinking && (
               <div className="border rounded-lg p-3 bg-blue-50 border-blue-200">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 mt-0.5">
-                    <Clock className="h-4 w-4 text-blue-500 animate-spin" />
+                  <div className="flex-shrink-0 mt-0.5 text-lg">
+                    ⏳
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">

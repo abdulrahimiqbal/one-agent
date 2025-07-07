@@ -1,10 +1,6 @@
 'use client'
 
-import { FileText, BarChart3, Calculator, BookOpen, Download } from 'lucide-react'
 import { ResearchSession, ResearchResult } from '@/types/research'
-import ReactMarkdown from 'react-markdown'
-import remarkMath from 'remark-math'
-import rehypeKatex from 'rehype-katex'
 
 interface ResultsSectionProps {
   session: ResearchSession | null
@@ -14,15 +10,15 @@ export default function ResultsSection({ session }: ResultsSectionProps) {
   const getResultIcon = (type: ResearchResult['type']) => {
     switch (type) {
       case 'equation':
-        return <Calculator className="h-4 w-4 text-physics-green" />
+        return '🧮'
       case 'graph':
-        return <BarChart3 className="h-4 w-4 text-physics-purple" />
+        return '📊'
       case 'citation':
-        return <BookOpen className="h-4 w-4 text-physics-blue" />
+        return '📚'
       case 'calculation':
-        return <Calculator className="h-4 w-4 text-orange-500" />
+        return '🔢'
       default:
-        return <FileText className="h-4 w-4 text-gray-500" />
+        return '📄'
     }
   }
 
@@ -57,8 +53,7 @@ export default function ResultsSection({ session }: ResultsSectionProps) {
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <FileText className="h-5 w-5 text-physics-green" />
-          Research Results
+          📄 Research Results
         </h2>
         <p className="text-sm text-gray-600 mt-1">
           Generated equations, calculations, and findings
@@ -68,7 +63,7 @@ export default function ResultsSection({ session }: ResultsSectionProps) {
       <div className="flex-1 overflow-y-auto p-4">
         {!session?.results.length ? (
           <div className="text-center text-gray-500 mt-8">
-            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+            <div className="text-4xl mb-4">📄</div>
             <p className="text-lg font-medium">No results yet</p>
             <p className="text-sm mt-2">
               Results will appear here as the agent processes your physics questions
@@ -83,7 +78,7 @@ export default function ResultsSection({ session }: ResultsSectionProps) {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div className="flex-shrink-0 mt-0.5">
+                    <div className="flex-shrink-0 mt-0.5 text-lg">
                       {getResultIcon(result.type)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -98,14 +93,8 @@ export default function ResultsSection({ session }: ResultsSectionProps) {
                       <h3 className="font-medium text-gray-900 mt-1">
                         {result.title}
                       </h3>
-                      <div className="mt-2 prose prose-sm max-w-none">
-                        <ReactMarkdown
-                          remarkPlugins={[remarkMath]}
-                          rehypePlugins={[rehypeKatex]}
-                          className="text-gray-700"
-                        >
-                          {result.content}
-                        </ReactMarkdown>
+                      <div className="mt-2 whitespace-pre-wrap text-gray-700">
+                        {result.content}
                       </div>
                       {result.metadata && (
                         <div className="mt-3 text-xs text-gray-500">
@@ -126,7 +115,7 @@ export default function ResultsSection({ session }: ResultsSectionProps) {
                     className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 transition-colors"
                     title="Download result"
                   >
-                    <Download className="h-4 w-4" />
+                    💾
                   </button>
                 </div>
               </div>
@@ -156,7 +145,7 @@ export default function ResultsSection({ session }: ResultsSectionProps) {
                 document.body.removeChild(a)
                 URL.revokeObjectURL(url)
               }}
-              className="text-physics-blue hover:text-physics-purple transition-colors"
+              className="text-blue-600 hover:text-blue-700 transition-colors"
             >
               Download All
             </button>

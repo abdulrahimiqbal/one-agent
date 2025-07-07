@@ -1,11 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Bot, User } from 'lucide-react'
-import { ResearchSession, Message } from '@/types/research'
-import ReactMarkdown from 'react-markdown'
-import remarkMath from 'remark-math'
-import rehypeKatex from 'rehype-katex'
+import { ResearchSession } from '@/types/research'
 
 interface ChatInterfaceProps {
   session: ResearchSession | null
@@ -43,8 +39,7 @@ export default function ChatInterface({ session, onSendMessage, isAgentThinking 
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <Bot className="h-5 w-5 text-physics-blue" />
-          Physics Chat
+          🤖 Physics Chat
         </h2>
         <p className="text-sm text-gray-600 mt-1">
           Ask me anything about physics research
@@ -55,7 +50,7 @@ export default function ChatInterface({ session, onSendMessage, isAgentThinking 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {!session?.messages.length ? (
           <div className="text-center text-gray-500 mt-8">
-            <Bot className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+            <div className="text-4xl mb-4">🤖</div>
             <p className="text-lg font-medium">Welcome to Physics Research Agent!</p>
             <p className="text-sm mt-2">
               I'm here to help you explore physics concepts, solve problems, and conduct research.
@@ -72,8 +67,8 @@ export default function ChatInterface({ session, onSendMessage, isAgentThinking 
             >
               {message.type === 'agent' && (
                 <div className="flex-shrink-0">
-                  <div className="h-8 w-8 bg-physics-blue rounded-full flex items-center justify-center">
-                    <Bot className="h-4 w-4 text-white" />
+                  <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                    🤖
                   </div>
                 </div>
               )}
@@ -81,18 +76,12 @@ export default function ChatInterface({ session, onSendMessage, isAgentThinking 
               <div
                 className={`max-w-[80%] rounded-lg p-3 ${
                   message.type === 'user'
-                    ? 'bg-physics-blue text-white'
+                    ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                <div className="prose prose-sm max-w-none">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkMath]}
-                    rehypePlugins={[rehypeKatex]}
-                    className={message.type === 'user' ? 'text-white' : 'text-gray-800'}
-                  >
-                    {message.content}
-                  </ReactMarkdown>
+                <div className="whitespace-pre-wrap">
+                  {message.content}
                 </div>
                 <div className={`text-xs mt-2 ${
                   message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
@@ -103,8 +92,8 @@ export default function ChatInterface({ session, onSendMessage, isAgentThinking 
 
               {message.type === 'user' && (
                 <div className="flex-shrink-0">
-                  <div className="h-8 w-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                  <div className="h-8 w-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm">
+                    👤
                   </div>
                 </div>
               )}
@@ -115,15 +104,15 @@ export default function ChatInterface({ session, onSendMessage, isAgentThinking 
         {isAgentThinking && (
           <div className="flex gap-3 justify-start">
             <div className="flex-shrink-0">
-              <div className="h-8 w-8 bg-physics-blue rounded-full flex items-center justify-center">
-                <Bot className="h-4 w-4 text-white" />
+              <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                🤖
               </div>
             </div>
             <div className="bg-gray-100 rounded-lg p-3">
-              <div className="thinking-dots flex gap-1">
-                <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+              <div className="flex gap-1">
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></span>
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></span>
               </div>
             </div>
           </div>
@@ -140,16 +129,16 @@ export default function ChatInterface({ session, onSendMessage, isAgentThinking 
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask about physics concepts, equations, or research topics..."
-            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-physics-blue focus:border-transparent"
+            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={2}
             disabled={isAgentThinking}
           />
           <button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isAgentThinking}
-            className="bg-physics-blue text-white px-4 py-2 rounded-lg hover:bg-physics-purple disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <Send className="h-4 w-4" />
+            ➤
           </button>
         </div>
       </div>
