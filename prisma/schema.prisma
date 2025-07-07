@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ResearchSession {
+  id        String   @id @default(cuid())
+  title     String
+  status    String   @default("active") // active, completed, paused, failed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+  progress ProgressStep[]
+  results  ResearchResult[]
+
+  @@map("research_sessions")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  type      String   // user, agent
+  content   String
+  timestamp DateTime @default(now())
+
+  sessionId String
+  session   ResearchSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model ProgressStep {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  status      String   @default("pending") // pending, in_progress, completed, failed
+  details     String?
+  timestamp   DateTime @default(now())
+
+  sessionId String
+  session   ResearchSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("progress_steps")
+}
+
+model ResearchResult {
+  id        String   @id @default(cuid())
+  type      String   // equation, graph, text, citation, calculation
+  title     String
+  content   String
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  sessionId String
+  session   ResearchSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("research_results")
+} 
