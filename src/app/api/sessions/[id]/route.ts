@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { PrismaClient } from '@prisma/client'
 import { UpdateSessionSchema, UUIDSchema } from '@/lib/validations'
 
 // Safe database operations with fallback
-async function safeDbOperation<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
+async function safeDbOperation<T>(operation: (prisma: PrismaClient) => Promise<T>, fallback: T): Promise<T> {
   try {
-    return await operation()
+    // Check if prisma is available
+    if (!prisma) {
+      console.log('Database not available, using fallback')
+      return fallback
+    }
+    return await operation(prisma)
   } catch (error) {
     console.log('Database operation failed, using fallback:', error)
     return fallback
@@ -21,7 +27,7 @@ export async function GET(
     const sessionId = params.id // Don't validate UUID for mock IDs
 
     const session = await safeDbOperation(
-      async () => {
+      async (prisma: PrismaClient) => {
         return await prisma.researchSession.findUnique({
           where: { id: sessionId },
           include: {
@@ -115,7 +121,7 @@ export async function PUT(
     const validatedData = UpdateSessionSchema.parse(body)
 
     const session = await safeDbOperation(
-      async () => {
+      async (prisma: PrismaClient) => {
         return await prisma.researchSession.update({
           where: { id: sessionId },
           data: {
@@ -182,7 +188,7 @@ export async function DELETE(
     const sessionId = params.id
 
     await safeDbOperation(
-      async () => {
+      async (prisma: PrismaClient) => {
         return await prisma.researchSession.delete({
           where: { id: sessionId },
         })

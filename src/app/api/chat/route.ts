@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { PhysicsAgent } from '@/lib/physics-agent'
+import { PrismaClient } from '@prisma/client'
 import { CreateSessionSchema, CreateMessageSchema, CreateResultSchema } from '@/lib/validations'
 
 // Initialize physics agent
@@ -44,9 +45,14 @@ async function withRetry<T>(
 }
 
 // Safe database operations with fallback
-async function safeDbOperation<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
+async function safeDbOperation<T>(operation: (prisma: PrismaClient) => Promise<T>, fallback: T): Promise<T> {
   try {
-    return await operation()
+    // Check if prisma is available
+    if (!prisma) {
+      console.log('Database not available, using fallback')
+      return fallback
+    }
+    return await operation(prisma)
   } catch (error) {
     console.log('Database operation failed, using fallback:', error)
     return fallback
@@ -87,7 +93,7 @@ export async function POST(request: NextRequest) {
     // Create or get session
     if (!currentSessionId) {
       const newSession = await safeDbOperation(
-        async () => {
+        async (prisma: PrismaClient) => {
           return await prisma.researchSession.create({ 
             data: {
               title: message.substring(0, 50) + '...',
@@ -108,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     // Save user message
     userMessage = await safeDbOperation(
-      async () => {
+      async (prisma: PrismaClient) => {
         return await prisma.message.create({ 
           data: {
             sessionId: currentSessionId,
@@ -122,7 +128,7 @@ export async function POST(request: NextRequest) {
 
     // Save agent response
     agentMessage = await safeDbOperation(
-      async () => {
+      async (prisma: PrismaClient) => {
         return await prisma.message.create({ 
           data: {
             sessionId: currentSessionId,
@@ -137,7 +143,7 @@ export async function POST(request: NextRequest) {
     // Save results if available
     if (physicsResponse.equations.length > 0 || physicsResponse.concepts.length > 0 || followUpQuestions.length > 0) {
       results = await safeDbOperation(
-        async () => {
+        async (prisma: PrismaClient) => {
           return await prisma.researchResult.create({ 
             data: {
               sessionId: currentSessionId,

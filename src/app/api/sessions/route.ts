@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { PrismaClient } from '@prisma/client'
 import { CreateSessionSchema, PaginationSchema } from '@/lib/validations'
 
 // Safe database operations with fallback
-async function safeDbOperation<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
+async function safeDbOperation<T>(operation: (prisma: PrismaClient) => Promise<T>, fallback: T): Promise<T> {
   try {
-    return await operation()
+    // Check if prisma is available
+    if (!prisma) {
+      console.log('Database not available, using fallback')
+      return fallback
+    }
+    return await operation(prisma)
   } catch (error) {
     console.log('Database operation failed, using fallback:', error)
     return fallback
@@ -17,14 +23,14 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const { page, limit } = PaginationSchema.parse({
-      page: searchParams.get('page'),
-      limit: searchParams.get('limit'),
+      page: searchParams.get('page') || '1',
+      limit: searchParams.get('limit') || '10',
     })
 
     const skip = (page - 1) * limit
 
     const [sessions, total] = await safeDbOperation(
-      async () => {
+      async (prisma) => {
         return await Promise.all([
           prisma.researchSession.findMany({
             skip,
@@ -88,7 +94,7 @@ export async function POST(request: NextRequest) {
     const validatedData = CreateSessionSchema.parse(body)
 
     const session = await safeDbOperation(
-      async () => {
+      async (prisma) => {
         return await prisma.researchSession.create({
           data: {
             title: validatedData.title,
