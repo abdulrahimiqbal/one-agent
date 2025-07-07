@@ -43,10 +43,13 @@ export class PhysicsAgent {
       }
 
       this.model = new ChatOpenAI({
-        modelName: 'gpt-4o-mini',
+        modelName: 'deepseek-chat',
         temperature: 0.1, // Low temperature for more consistent physics answers
         maxTokens: 2000,
         openAIApiKey: process.env.OPENAI_API_KEY,
+        configuration: {
+          baseURL: 'https://api.deepseek.com',
+        },
       })
     }
     return this.model
